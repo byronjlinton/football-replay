@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="robots" content="noindex,nofollow">
+<title>Football replay</title>
+<style>
+*{box-sizing:border-box}html{background:#101713;color:#f1f5f2;font:17px/1.5 system-ui,sans-serif}body{margin:0;padding:16px;padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}main{max-width:1120px;margin:auto}h1{font-size:1.4rem;margin:0 0 4px}p{margin:6px 0 16px;color:#bacabd}video{display:block;width:100%;max-height:78svh;background:#000;border-radius:8px}video:fullscreen{width:100vw;height:100dvh;max-height:none;border-radius:0;object-fit:contain}button,a{touch-action:manipulation}button{font:inherit;font-weight:650;color:#102119;background:#9ae6b1;border:0;border-radius:8px;min-height:48px;padding:10px 20px;cursor:pointer}a{color:#b8ecc9;text-underline-offset:4px}.actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:14px 0 8px}.actions a{padding:10px 0;min-height:44px}.note{font-size:.9rem}details{margin-top:24px;border-top:1px solid #34483b;padding-top:16px}summary{cursor:pointer;min-height:44px;font-weight:650}#status{min-height:1.5em;margin-top:6px;font-size:.9rem}a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #fff;outline-offset:4px}@media(orientation:landscape) and (max-height:600px){body{padding:8px 16px}h1{font-size:1rem}.intro{font-size:.85rem;margin:0 0 8px}video{max-height:calc(100svh - 150px)}.actions{margin:8px 0}.note,details{font-size:.85rem}}
+</style>
+</head>
+<body>
+<main>
+<h1>Football replay</h1>
+<p class="intro">Tap Full screen, then turn your phone sideways.</p>
+<video id="match" controls playsinline preload="metadata" aria-label="Full football match replay">
+<source src="full-match-phone.mp4" type="video/mp4">
+<p><a href="full-match-phone.mp4">Open the full match video</a></p>
+</video>
+<div class="actions">
+<button id="fullscreen" type="button">Full screen</button>
+<a href="full-match-phone.mp4">Open video directly</a>
+</div>
+<p class="note">The complete 90-minute match at 8× speed. Play, pause and seek using the video controls.</p>
+<p id="status" role="status" aria-live="polite"></p>
+<details>
+<summary>Receiver defending: before and after</summary>
+<p class="note">The same recorded pass, before and after the defensive change.</p>
+<video controls playsinline preload="none" aria-label="Receiver defending before and after">
+<source src="receiver-fix-phone.mp4" type="video/mp4">
+<p><a href="receiver-fix-phone.mp4">Open the comparison video</a></p>
+</video>
+<div class="actions"><a href="receiver-fix-phone.mp4">Open comparison directly</a></div>
+</details>
+<p class="note">Saved experimental match. This replay does not run a simulation.</p>
+</main>
+<script>
+const match=document.getElementById('match');
+const status=document.getElementById('status');
+document.getElementById('fullscreen').addEventListener('click',async()=>{
+  status.textContent='';
+  // Both requests originate in the tap so mobile browsers retain user activation.
+  const playback=match.play();
+  if(playback)playback.catch(()=>{status.textContent='Tap the video play control to start.';});
+  try{
+    if(match.requestFullscreen)await match.requestFullscreen();
+    else if(match.webkitEnterFullscreen)match.webkitEnterFullscreen();
+    else status.textContent='Use the video’s fullscreen control, or open the video directly in your browser.';
+  }catch{
+    status.textContent='Use the video’s fullscreen control, or open the video directly in your browser.';
+  }
+});
+match.addEventListener('error',()=>{
+  status.textContent='The video could not load. Try “Open video directly” in Chrome or Safari.';
+});
+</script>
+</body>
+</html>
